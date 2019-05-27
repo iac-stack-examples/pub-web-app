@@ -1,0 +1,20 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=pub-web-app
+      - POSTGRES_PASSWORD=pub-web-app
+  web:
+    build: .
+    image: iac-stack-examples/pub-web-app:latest
+    command: bash -c "rm -f tmp/pids/server.pid && bundle install --path=vendor && bundle exec rails s -p 3002 -b '0.0.0.0'"
+    environment:
+      - RAILS_ENV=development
+      - DEV_DATABASE_URL=postgres://pub-web-app:pub-web-app@db/pub-web-app-dev
+    ports:
+      - "3002:3002"
+    links:
+      - db
+    depends_on:
+      - db
